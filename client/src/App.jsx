@@ -1,14 +1,18 @@
 import { useState } from "react";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Grid from "./grid.jsx";
-import landingPage from "./landingPage/landingPage.jsx";
+// import LandingPage from "./landingpage/landingpage.jsx"
+
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <div>
-      <Grid />
-      <landingPage />
+      <Routes>
+        {/* <Route path="/" element={}/> */}
+        <Route path="/game" element={<Grid />} />
+      </Routes>
     </div>
   );
 }

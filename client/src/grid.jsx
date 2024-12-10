@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./grid.css"; // Import CSS file for grid styles
 // import { SketchPicker } from "react-color";
-// import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // import NewGrid from "./NewGrid";
 // Grid and Show are the beating heart of this app!!
 const API = import.meta.env.VITE_BASE_API_URL;
@@ -15,7 +15,7 @@ const Grid = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [clearGrid, setClearGrid] = useState(false);
   const grid_size = gridWidth * gridWidth;
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // const handleSubmit = (event) => {
   //   event.preventDefault();
@@ -28,9 +28,9 @@ const Grid = () => {
     const letters =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`~!@#$%^&*()-_=+;:,<.>/?[]";
 
-    for (let i = 0; i < gridWidth; i++) {
+    for (let i = 0; i < 6; i++) {
       const row = [];
-      for (let j = 0; j < gridWidth; j++) {
+      for (let j = 0; j < 7; j++) {
         const x = letters.charAt(j);
         const y = i + 1;
         const coordinates = x + y;
@@ -49,31 +49,53 @@ const Grid = () => {
 
   // Function to handle click on a grid square
   const handleSquareClick = (coordinates) => {
-    setGridData((prevGridData) =>
-      prevGridData.map((row) =>
-        row.map((square) =>
-          square.coordinates === coordinates
-            ? { ...square, color: currentColor }
-            : square
-        )
-      )
-    );
-  };
-
-  const handleMouseDown = (coordinates) => {
-    setIsDragging(true);
-    handleSquareClick(coordinates);
-  };
-
-  const handleMouseEnter = (coordinates) => {
-    if (isDragging) {
-      handleSquareClick(coordinates);
+    if (currentColor === "blue") {
+      setCurrentColor("red");
+    } else if (currentColor === "red") {
+      setCurrentColor("blue");
     }
+    setGridData((prevGridData) => {
+      // Find the column of the clicked square
+      const column = coordinates[0]; // 'A' to 'G'
+
+      // Find the lowest empty square in this column
+      for (let rowIndex = prevGridData.length - 1; rowIndex >= 0; rowIndex--) {
+        const square = prevGridData[rowIndex].find(
+          (sq) => sq.coordinates[0] === column && sq.color === "white"
+        );
+
+        if (square) {
+          // Update the square's color
+          const newGrid = prevGridData.map((row, rIndex) =>
+            row.map((sq) =>
+              rIndex === rowIndex && sq.coordinates === square.coordinates
+                ? { ...sq, color: currentColor }
+                : sq
+            )
+          );
+
+          return newGrid; // Stop searching and return the updated grid
+        }
+      }
+
+      return prevGridData; // If no empty square is found, return the grid as-is
+    });
   };
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
+  // const handleMouseDown = (coordinates) => {
+  //   setIsDragging(true);
+  //   handleSquareClick(coordinates);
+  // };
+
+  // const handleMouseEnter = (coordinates) => {
+  //   if (isDragging) {
+  //     handleSquareClick(coordinates);
+  //   }
+  // };
+
+  // const handleMouseUp = () => {
+  //   setIsDragging(false);
+  // };
 
   const clear = () => {
     setClearGrid(!clearGrid);
@@ -131,16 +153,15 @@ const Grid = () => {
 
   return (
     <div>
-      Hello
       <button
         onClick={() => {
-          // navigate("/");
+          navigate("/");
         }}
       >
         Home
       </button>
-      <h1>Pixel Art Maker</h1>
-      <h3>Grid Size: {grid_size}</h3>
+      <h1>Connect 4!</h1>
+      {/* <h3>Grid Size: {grid_size}</h3> */}
       {/* <NewGrid
         gridWidth={gridWidth}
         setGridWidth={setGridWidth}
@@ -160,16 +181,16 @@ const Grid = () => {
                 className="grid-square"
                 style={{ backgroundColor: square.color }}
                 onClick={() => handleSquareClick(square.coordinates)}
-                onMouseDown={() => handleMouseDown(square.coordinates)}
-                onMouseEnter={() => handleMouseEnter(square.coordinates)}
-                onMouseUp={handleMouseUp}
+                // onMouseDown={() => handleMouseDown(square.coordinates)}
+                // onMouseEnter={() => handleMouseEnter(square.coordinates)}
+                // onMouseUp={handleMouseUp}
               />
             ))}
           </div>
         ))}
       </div>
       <button onClick={clear}>Clear Grid</button>
-      <button onClick={saveImage}>Save Image</button>
+      {/* <button onClick={saveImage}>Save Image</button> */}
     </div>
   );
 };
