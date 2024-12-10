@@ -1,15 +1,18 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Grid from "./grid.jsx";
+// import LandingPage from "./landingpage/landingpage.jsx"
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <div>
-      <Grid />
+      <Routes>
+        {/* <Route path="/" element={}/> */}
+        <Route path="/game" element={<Grid />} />
+      </Routes>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./grid.css"; // Import CSS file for grid styles
 // import { SketchPicker } from "react-color";
-// import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // import NewGrid from "./NewGrid";
 // Grid and Show are the beating heart of this app!!
 const API = import.meta.env.VITE_BASE_API_URL;
@@ -15,7 +15,7 @@ const Grid = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [clearGrid, setClearGrid] = useState(false);
   const grid_size = gridWidth * gridWidth;
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // const handleSubmit = (event) => {
   //   event.preventDefault();
@@ -153,10 +153,9 @@ const Grid = () => {
 
   return (
     <div>
-      Hello
       <button
         onClick={() => {
-          // navigate("/");
+          navigate("/");
         }}
       >
         Home
@@ -191,7 +190,7 @@ const Grid = () => {
         ))}
       </div>
       <button onClick={clear}>Clear Grid</button>
-      <button onClick={saveImage}>Save Image</button>
+      {/* <button onClick={saveImage}>Save Image</button> */}
     </div>
   );
 };
