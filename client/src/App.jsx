@@ -7,11 +7,7 @@ import Grid from "./grid";
 function App() {
   const [count, setCount] = useState(0);
 
-  return (
-    <>
-      <Grid />
-    </>
-  );
+  return <>HI There!</>;
 }
 
 export default App;
