@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./Grid.css"; // Import CSS file for grid styles
-import { SketchPicker } from "react-color";
+// import { SketchPicker } from "react-color";
 import { Link, useNavigate } from "react-router-dom";
-import NewGrid from "./NewGrid";
+// import NewGrid from "./NewGrid";
 // Grid and Show are the beating heart of this app!!
 const API = import.meta.env.VITE_BASE_API_URL;
 console.log(API);
@@ -131,6 +131,7 @@ const Grid = () => {
 
   return (
     <div>
+      Hello
       <button
         onClick={() => {
           navigate("/");
@@ -140,16 +141,16 @@ const Grid = () => {
       </button>
       <h1>Pixel Art Maker</h1>
       <h3>Grid Size: {grid_size}</h3>
-      <NewGrid
+      {/* <NewGrid
         gridWidth={gridWidth}
         setGridWidth={setGridWidth}
         grid_id={grid_id}
         setGridId={setGridId}
-      />
-      <SketchPicker
+      /> */}
+      {/* <SketchPicker
         color={currentColor}
         onChange={(color) => setCurrentColor(color.hex)}
-      />
+      /> */}
       <div className="grid-container" style={{ gridTemplateColumns: "10fr" }}>
         {gridData.map((row, rowIndex) => (
           <div key={rowIndex} className="grid-row">
@@ -168,7 +169,6 @@ const Grid = () => {
         ))}
       </div>
       <button onClick={clear}>Clear Grid</button>
-
       <button onClick={saveImage}>Save Image</button>
     </div>
   );
