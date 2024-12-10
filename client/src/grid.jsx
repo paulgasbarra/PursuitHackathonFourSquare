@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./Grid.css"; // Import CSS file for grid styles
+import "./grid.css"; // Import CSS file for grid styles
 // import { SketchPicker } from "react-color";
 // import { Link, useNavigate } from "react-router-dom";
 // import NewGrid from "./NewGrid";
