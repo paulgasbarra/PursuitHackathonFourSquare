@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
-import "./landingPage.css"
+import React, { useState } from 'react';
+import Modal from '../Modal/Modal';
+import "./landingPage.css";
 
-const landingPage = () => {
-  const { API } = useContext(UserContext);
-  const [singlePlayer, setSinglePlayer] = useState(false)
-  const [coOp, setCoOp] = useState(false)
-  const [onlineMatch, setOnlineMatch] = useState(false)
+const LandingPage = () => {
+  const [singlePlayer, setSinglePlayer] = useState(false);
+  const [coOp, setCoOp] = useState(false);
+  const [onlineMatch, setOnlineMatch] = useState(false);
+
   return (
     <div>
       <div className='player-profile'>
@@ -21,14 +22,53 @@ const landingPage = () => {
       <div className='play-mode'>
         <h1>Connect 4</h1>
         <div className='play-mode__buttons'>
-          <button>Single Player</button>
-          <button>Local Co-Op</button>
-          <button>Online Match</button>
+          <button
+            className='play-mode__buttons-singlePlayer'
+            onClick={() => setSinglePlayer(true)}
+          >
+            Single Player
+          </button>
+          <button
+            className='play-mode__buttons-CoOp'
+            onClick={() => setCoOp(true)}
+          >
+            Local Co-Op
+          </button>
+          <button
+            className='play-mode__buttons-onlineMatch'
+            onClick={() => setOnlineMatch(true)}
+          >
+            Online Match
+          </button>
         </div>
-      
       </div>
-    </div>
-  )
-}
 
-export default landingPage
+      {/* Modals */}
+      <Modal
+        isOpen={singlePlayer}
+        onClose={() => setSinglePlayer(false)}
+        title="Single Player Mode"
+      >
+        <p>Prepare to play against the computer!</p>
+      </Modal>
+
+      <Modal
+        isOpen={coOp}
+        onClose={() => setCoOp(false)}
+        title="Local Co-Op Mode"
+      >
+        <p>Take turns playing against a friend on the same device!</p>
+      </Modal>
+
+      <Modal
+        isOpen={onlineMatch}
+        onClose={() => setOnlineMatch(false)}
+        title="Online Match"
+      >
+        <p>Find an online opponent and start playing!</p>
+      </Modal>
+    </div>
+  );
+};
+
+export default LandingPage;
