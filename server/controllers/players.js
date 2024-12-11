@@ -45,7 +45,7 @@ players.post("/", async (req, res) => {
         const newPlayer = await createPlayer(playerData);
         res.status(201).json({ payload: newPlayer });
     } catch (error) {
-        res.status(400).json({ payload: error.message })
+        res.status(400).json({ payload: error.message });
     }
 });
 
