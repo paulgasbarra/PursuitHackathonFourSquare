@@ -1,7 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Grid from "./grid.jsx";
-import LandingPage from "./LandingPage/LandingPage.jsx";
+import LandingPage from "./landingPage/landingPage.jsx";
+import signIn from "./Sign-in/signIn.jsx";
 
 function App() {
   return (
