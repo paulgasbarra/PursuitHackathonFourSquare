@@ -12,7 +12,6 @@ const Grid = () => {
   const [gridWidth, setGridWidth] = useState(30);
   const [gridData, setGridData] = useState(createEmptyGrid());
   const [currentColor, setCurrentColor] = useState("blue");
-  const [isDragging, setIsDragging] = useState(false);
   const [clearGrid, setClearGrid] = useState(false);
   const grid_size = gridWidth * gridWidth;
   const navigate = useNavigate();
@@ -47,6 +46,50 @@ const Grid = () => {
     setGridData(newGrid);
   }, [gridWidth, clearGrid, grid_id]);
 
+  const checkForWin = (grid, row, col, color) => {
+    // Directions to check: [rowDelta, colDelta]
+    const directions = [
+      [0, 1], // Horizontal (right)
+      [1, 0], // Vertical (down)
+      [1, 1], // Diagonal (down-right)
+      [1, -1], // Diagonal (down-left)
+    ];
+
+    const numRows = grid.length;
+    const numCols = grid[0].length;
+
+    const countConsecutive = (row, col, rowDelta, colDelta) => {
+      let count = 0;
+
+      while (
+        row >= 0 &&
+        row < numRows &&
+        col >= 0 &&
+        col < numCols &&
+        grid[row][col].color === color
+      ) {
+        count++;
+        row += rowDelta;
+        col += colDelta;
+      }
+
+      return count;
+    };
+
+    for (const [rowDelta, colDelta] of directions) {
+      // Count squares in both forward and backward directions
+      const forwardCount = countConsecutive(row, col, rowDelta, colDelta);
+      const backwardCount = countConsecutive(row, col, -rowDelta, -colDelta);
+
+      // Subtract 1 to avoid double-counting the current square
+      if (forwardCount + backwardCount - 1 >= 4) {
+        return true; // Win condition met
+      }
+    }
+
+    return false; // No win found
+  };
+
   // Function to handle click on a grid square
   const handleSquareClick = (coordinates) => {
     if (currentColor === "blue") {
@@ -55,86 +98,42 @@ const Grid = () => {
       setCurrentColor("blue");
     }
     setGridData((prevGridData) => {
-      // Find the column of the clicked square
-      const column = coordinates[0]; // 'A' to 'G'
+      const column = coordinates[0];
+      const newGrid = [...prevGridData];
 
       // Find the lowest empty square in this column
-      for (let rowIndex = prevGridData.length - 1; rowIndex >= 0; rowIndex--) {
-        const square = prevGridData[rowIndex].find(
+      for (let rowIndex = newGrid.length - 1; rowIndex >= 0; rowIndex--) {
+        const square = newGrid[rowIndex].find(
           (sq) => sq.coordinates[0] === column && sq.color === "white"
         );
 
         if (square) {
-          // Update the square's color
-          const newGrid = prevGridData.map((row, rIndex) =>
-            row.map((sq) =>
-              rIndex === rowIndex && sq.coordinates === square.coordinates
-                ? { ...sq, color: currentColor }
-                : sq
-            )
-          );
+          square.color = currentColor;
 
-          return newGrid; // Stop searching and return the updated grid
+          // Check for win after the move
+          const win = checkForWin(
+            newGrid,
+            rowIndex,
+            column.charCodeAt(0) - "a".charCodeAt(0),
+            currentColor
+          );
+          if (win) {
+            alert(`${currentColor} wins!`);
+          }
+
+          return newGrid;
         }
       }
 
-      return prevGridData; // If no empty square is found, return the grid as-is
+      return prevGridData;
     });
   };
-
-  // const handleMouseDown = (coordinates) => {
-  //   setIsDragging(true);
-  //   handleSquareClick(coordinates);
-  // };
-
-  // const handleMouseEnter = (coordinates) => {
-  //   if (isDragging) {
-  //     handleSquareClick(coordinates);
-  //   }
-  // };
-
-  // const handleMouseUp = () => {
-  //   setIsDragging(false);
-  // };
 
   const clear = () => {
     setClearGrid(!clearGrid);
   };
 
   // Function to save the grid data to the backend
-  function saveImage() {
-    fetch(`${API}/artworks/squares`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(gridData),
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.text(); // Get raw response text
-        } else {
-          return response.text().then((text) => {
-            throw new Error(
-              `HTTP error! Status: ${response.status}. Response: ${text}`
-            );
-          });
-        }
-      })
-      .then((text) => {
-        if (text) {
-          return JSON.parse(text); // Attempt to parse text as JSON
-        } else {
-          return {}; // Return empty object if response is empty
-        }
-      })
-      .then((data) => {
-        console.log(data, "GRID DATA", JSON.stringify(gridData));
-      })
-      .catch((error) => {
-        console.error("Error saving image:", error);
-      });
-  }
 
   let repeatTimes = 6;
 
@@ -161,6 +160,7 @@ const Grid = () => {
         Home
       </button>
       <h1>Connect 4!</h1>
+      <h1>It's {currentColor}'s turn!</h1>
       {/* <h3>Grid Size: {grid_size}</h3> */}
       {/* <NewGrid
         gridWidth={gridWidth}
@@ -189,6 +189,7 @@ const Grid = () => {
           </div>
         ))}
       </div>
+
       <button onClick={clear}>Clear Grid</button>
       {/* <button onClick={saveImage}>Save Image</button> */}
     </div>
