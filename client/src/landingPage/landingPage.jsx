@@ -1,5 +1,5 @@
 import React from "react";
-import "./landingPage.css";
+import "./LandingPage.css";
 
 const LandingPage = () => {
   return (
@@ -14,7 +14,6 @@ const LandingPage = () => {
           <button>Multi-player</button>
           <button></button>
         </div>
-        div
         <div></div>
         <div></div>
       </div>
