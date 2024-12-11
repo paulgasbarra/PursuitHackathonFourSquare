@@ -1,3 +1,5 @@
+\c connect_four;
+
 INSERT INTO players (username, email, password, wins, losses, draws) VALUES
 ('PlayerOne', 'playerone@example.com', 'hashedpassword1', 10, 5, 2),
 ('PlayerTwo', 'playertwo@example.com', 'hashedpassword2', 15, 3, 4),
