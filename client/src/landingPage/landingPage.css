@@ -1,0 +1,66 @@
+.landing-page {
+    display: flex;
+    flex-direction: row;
+    height: 50vh;
+    width: 70vw;
+    align-items: space-between;
+    padding: 20px;
+  }
+  
+  .landing-page__section {
+    flex: 1;
+    padding: 20px;
+    /* overflow-y: auto; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* border: 1px solid #ccc; */
+  }
+  
+  .player-profile,
+  .play-mode,
+  .leaderboard {
+    /* max-width: 90%; */
+    /* text-align: center; */
+  }
+  
+  .play-mode__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  .play-mode__buttons button {
+    padding: 15px;
+    font-size: 1.2rem;
+    border: 1px solid #ccc;
+    background: none;
+    cursor: pointer;
+  }
+  
+  .play-mode__buttons button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .leaderboard__table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .leaderboard__table th,
+  .leaderboard__table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .leaderboard__table th {
+    font-weight: bold;
+  }
+  
+  .leaderboard__table tr:hover {
+    background-color: #eaeaea;
+  }
+  
