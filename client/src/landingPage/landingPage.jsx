@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Modal from "../Modal/Modal";
 import "./landingPage.css";
+import { Link } from "react-router-dom";
 
 const LandingPage = () => {
   const [singlePlayer, setSinglePlayer] = useState(false);
@@ -22,18 +23,22 @@ const LandingPage = () => {
       <div className="play-mode">
         <h1>Connect 4</h1>
         <div className="play-mode__buttons">
-          <button
-            className="play-mode__buttons-singlePlayer"
-            onClick={() => setSinglePlayer(true)}
-          >
-            Single Player
-          </button>
-          <button
-            className="play-mode__buttons-CoOp"
-            onClick={() => setCoOp(true)}
-          >
-            Local Co-Op
-          </button>
+          <Link to="/vsbot">
+            <button
+              className="play-mode__buttons-singlePlayer"
+              onClick={() => setSinglePlayer(true)}
+            >
+              Single Player
+            </button>
+          </Link>
+          <Link to="/game">
+            <button
+              className="play-mode__buttons-CoOp"
+              onClick={() => setCoOp(true)}
+            >
+              Local 2 Player
+            </button>
+          </Link>
           <button
             className="play-mode__buttons-onlineMatch"
             onClick={() => setOnlineMatch(true)}
