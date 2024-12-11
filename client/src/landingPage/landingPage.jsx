@@ -1,12 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
 import Modal from '../Modal/Modal';
 import "./landingPage.css";
 
 
 const LandingPage = () => {
+  
   const [singlePlayer, setSinglePlayer] = useState(false);
   const [coOp, setCoOp] = useState(false);
   const [onlineMatch, setOnlineMatch] = useState(false);
+  const handleLeaderBoard = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${API_URL}/players`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMessage(`Welcome, ${data.username}!`);
+      } else {
+        const error = await response.text();
+        setMessage(`Error: ${error}`);
+      }
+    } catch (error) {
+      console.error("players error:", error);
+      setMessage("An unexpected error occurred.");
+    }
+  };
+
 
   const leaderboard = [
     { rank: 1, username: "Player1", wins: 50 },
@@ -106,7 +130,6 @@ const LandingPage = () => {
     </div>
   );
 };
-
 
 
 export default LandingPage;

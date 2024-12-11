@@ -23,7 +23,7 @@ const Modal = ({ isOpen, onClose, title }) => {
           <select id="player-turn-dropdown" className="modal__dropdown">
             <option value="player1">Player 1</option>
             <option value="player2">Player 2</option>
-            <option value="computer">Computer</option>
+            <option value="computer">Random</option>
           </select>
         </div>
       </div>
