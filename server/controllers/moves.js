@@ -16,7 +16,14 @@ moves.post("/", async (req, res) => {
         if (latestMove && latestMove.player_id === player_id) {
             throw new Error("It's not this player's turn.");
         }
+        //CHECK IF COLUMN IS FULL
+        const movesInColumn = await pool.query("SELECT COUNT(*) FROM games_moves WHERE game_id = $1 AND move = $2", [game_id, move]
+        );
 
+        if (parseInt(movesInColumn.rows[0].count, 10) >= 6) {
+            throw new Errorr("This column is full.");
+        }
+        //ADDING THE MOVE
         const newMove = await addMove({ game_id, player_id, move });
         res.status(201).json({ payload: newMove });
     } catch (error) {
