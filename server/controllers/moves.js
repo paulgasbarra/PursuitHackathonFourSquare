@@ -25,6 +25,40 @@ moves.post("/", async (req, res) => {
         }
         //ADDING THE MOVE
         const newMove = await addMove({ game_id, player_id, move });
+
+        //GET the current board
+        const moves = await getGameMoves(game_id);
+        const board = Array(6).fill(null).map(() => Array(7).fill(null));
+
+        //Populate the board
+        moves.forEach(({ move: col, player_id: pid }) => {
+            for (let row = 5; row >= 0; row--) {
+                if (!board[row][col - 1]) {
+                    board[row][col - 1] = pid;
+                    break;
+                }
+            }
+        });
+
+        //CHECK FOR A WINNING MOVE
+
+        let isWin = false;
+        for (let row = 0; row < 6; row++) {
+            for (let col = 0; col < 7; col++) {
+                if (board[row][col] === player_id) {
+                    if (isWinningMove(board, row, col, player_id)) {
+                        isWin = true;
+                        break;
+                    }
+                }
+            }
+        }
+        //IF WIN UPDATE GAME STATUS
+        if (isWin) {
+            await pool.query("UPDATE games SET winner_id = $1, status = 'completed' WHERE id= $2", [player_id, game_id]
+            );
+        }
+
         res.status(201).json({ payload: newMove });
     } catch (error) {
         res.status(400).json({ error: error.message });
