@@ -2,7 +2,73 @@ import React, { useState, useEffect } from "react";
 import "./grid.css"; // Import CSS file for grid styles
 import { Link, useNavigate } from "react-router-dom";
 
-const Grid = () => {
+const BotPlayer = () => {
+  // BOT ------------BOT ------------BOT ------------BOT ------------BOT ------------
+
+  // Function to calculate the minimax value of a board state
+  function minimax(grid, depth, isMaximizing) {
+    if (checkForWin(newGrid, row, col, color)) {
+      return isMaximizing ? -10 : 10;
+    }
+    if (depth === 0 || isGridFull(grid)) {
+      return 0; // Depth limit reached or grid full, consider as neutral
+    }
+
+    let bestScore = isMaximizing ? -Infinity : Infinity;
+
+    for (let col = 0; col < grid[0].length; col++) {
+      const newGrid = simulateMove(grid, col, isMaximizing ? "Red" : "Blue");
+      if (newGrid) {
+        const score = minimax(newGrid, depth - 1, !isMaximizing);
+        bestScore = isMaximizing
+          ? Math.max(score, bestScore)
+          : Math.min(score, bestScore);
+      }
+    }
+
+    return bestScore;
+  }
+
+  // Simulate the move and return new grid state
+  function simulateMove(grid, col, color) {
+    const newGrid = grid.map((row) => row.map((square) => ({ ...square }))); // Deep copy
+    for (let row = newGrid.length - 1; row >= 0; row--) {
+      if (newGrid[row][col].color === "white") {
+        newGrid[row][col].color = color;
+        return newGrid;
+      }
+    }
+    return null; // Column full
+  }
+
+  // Check if the grid is full
+  function isGridFull(grid) {
+    return grid.every((row) => row.every((square) => square.color !== "white"));
+  }
+
+  // AI move function
+  function makeAIMove(grid) {
+    let bestScore = -Infinity;
+    let bestMove = null;
+
+    for (let col = 0; col < grid[0].length; col++) {
+      const newGrid = simulateMove(grid, col, "Red"); // Assuming AI is 'red'
+      if (newGrid) {
+        const score = minimax(newGrid, 6, false); // Depth of 4
+        if (score > bestScore) {
+          bestScore = score;
+          bestMove = col;
+        }
+      }
+    }
+
+    if (bestMove !== null) {
+      return bestMove;
+    }
+    return null; // No valid moves
+  }
+
+  // GRID ------------GRID ------------GRID ------------GRID ------------GRID ------------
   const [grid_id, setGridId] = useState(0);
   const [gridWidth, setGridWidth] = useState(30);
   const [gridData, setGridData] = useState(createEmptyGrid());
@@ -119,6 +185,16 @@ const Grid = () => {
     });
   };
 
+  useEffect(() => {
+    if (currentColor === "Red") {
+      const bestMove = makeAIMove(gridData);
+      if (bestMove !== null) {
+        const column = String.fromCharCode("a".charCodeAt(0) + bestMove); // Convert to column letter
+        handleSquareClick(column); // Pass the column as a string
+      }
+    }
+  }, [currentColor, gridData]);
+
   const clear = () => {
     setClearGrid(!clearGrid);
   };
@@ -158,4 +234,4 @@ const Grid = () => {
   );
 };
 
-export default Grid;
+export default BotPlayer;
