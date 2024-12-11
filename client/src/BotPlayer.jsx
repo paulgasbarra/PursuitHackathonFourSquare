@@ -4,22 +4,115 @@ import { Link, useNavigate } from "react-router-dom";
 
 const BotPlayer = () => {
   // BOT ------------BOT ------------BOT ------------BOT ------------BOT ------------
+  function calculateScore(grid, color) {
+    let score = 0;
+
+    // Opponent's color
+    const opponentColor = color === "Red" ? "Blue" : "Red";
+
+    // Helper function to count sequences
+    function countSequence(startRow, startCol, rowStep, colStep, targetColor) {
+      let count = 0;
+      let openEnds = 0;
+
+      for (let i = 0; i < 4; i++) {
+        // Check up to 4 in a line
+        const row = startRow + i * rowStep;
+        const col = startCol + i * colStep;
+
+        if (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length) {
+          if (grid[row][col].color === targetColor) {
+            count++;
+          } else if (grid[row][col].color === "white") {
+            openEnds++;
+          } else {
+            break;
+          }
+        } else {
+          break;
+        }
+      }
+
+      return { count, openEnds };
+    }
+
+    // Evaluate all directions: rows, columns, and diagonals
+    for (let row = 0; row < grid.length; row++) {
+      for (let col = 0; col < grid[0].length; col++) {
+        if (
+          grid[row][col].color === "white" ||
+          grid[row][col].color === color
+        ) {
+          // Horizontal (right)
+          let { count, openEnds } = countSequence(row, col, 0, 1, color);
+          score += evaluatePattern(count, openEnds);
+
+          // Vertical (down)
+          ({ count, openEnds } = countSequence(row, col, 1, 0, color));
+          score += evaluatePattern(count, openEnds);
+
+          // Diagonal (down-right)
+          ({ count, openEnds } = countSequence(row, col, 1, 1, color));
+          score += evaluatePattern(count, openEnds);
+
+          // Diagonal (down-left)
+          ({ count, openEnds } = countSequence(row, col, 1, -1, color));
+          score += evaluatePattern(count, openEnds);
+
+          // Repeat for the opponent to reduce their potential
+          ({ count, openEnds } = countSequence(row, col, 0, 1, opponentColor));
+          score -= evaluatePattern(count, openEnds);
+
+          ({ count, openEnds } = countSequence(row, col, 1, 0, opponentColor));
+          score -= evaluatePattern(count, openEnds);
+
+          ({ count, openEnds } = countSequence(row, col, 1, 1, opponentColor));
+          score -= evaluatePattern(count, openEnds);
+
+          ({ count, openEnds } = countSequence(row, col, 1, -1, opponentColor));
+          score -= evaluatePattern(count, openEnds);
+        }
+      }
+    }
+
+    return score;
+  }
+
+  // Function to evaluate the pattern score
+  function evaluatePattern(count, openEnds) {
+    if (count === 4) {
+      return 1000; // Winning move
+    } else if (count === 3 && openEnds > 0) {
+      return 50; // Good potential for winning
+    } else if (count === 2 && openEnds > 1) {
+      return 10; // Early game advantage
+    }
+    return 0; // Neutral or blocked
+  }
 
   // Function to calculate the minimax value of a board state
-  function minimax(grid, depth, isMaximizing) {
-    if (checkForWin(newGrid, row, col, color)) {
-      return isMaximizing ? -10 : 10;
+  function minimax(grid, depth, isMaximizing, color) {
+    if (checkForWin(grid)) {
+      return isMaximizing ? -10 : 10; // Score for win/loss
     }
+
     if (depth === 0 || isGridFull(grid)) {
-      return 0; // Depth limit reached or grid full, consider as neutral
+      return calculateScore(grid, color); // Return heuristic score instead of 0
     }
 
     let bestScore = isMaximizing ? -Infinity : Infinity;
 
     for (let col = 0; col < grid[0].length; col++) {
-      const newGrid = simulateMove(grid, col, isMaximizing ? "Red" : "Blue");
-      if (newGrid) {
-        const score = minimax(newGrid, depth - 1, !isMaximizing);
+      const result = simulateMove(grid, col, color);
+      if (result) {
+        const newGrid = result.grid;
+        const score = minimax(
+          newGrid,
+          depth - 1,
+          !isMaximizing,
+          isMaximizing ? "Blue" : "Red"
+        );
+
         bestScore = isMaximizing
           ? Math.max(score, bestScore)
           : Math.min(score, bestScore);
@@ -31,14 +124,14 @@ const BotPlayer = () => {
 
   // Simulate the move and return new grid state
   function simulateMove(grid, col, color) {
-    const newGrid = grid.map((row) => row.map((square) => ({ ...square }))); // Deep copy
+    const newGrid = grid.map((row) => row.map((square) => ({ ...square })));
     for (let row = newGrid.length - 1; row >= 0; row--) {
       if (newGrid[row][col].color === "white") {
         newGrid[row][col].color = color;
-        return newGrid;
+        return { grid: newGrid, row, col };
       }
     }
-    return null; // Column full
+    return null; // Column is full
   }
 
   // Check if the grid is full
@@ -52,9 +145,22 @@ const BotPlayer = () => {
     let bestMove = null;
 
     for (let col = 0; col < grid[0].length; col++) {
-      const newGrid = simulateMove(grid, col, "Red"); // Assuming AI is 'red'
-      if (newGrid) {
-        const score = minimax(newGrid, 6, false); // Depth of 4
+      // Check for immediate win
+      const winResult = simulateMove(grid, col, "Red");
+      if (winResult && checkForWin(winResult.grid)) {
+        return col; // Take winning move
+      }
+
+      // Check for immediate block
+      const blockResult = simulateMove(grid, col, "Blue");
+      if (blockResult && checkForWin(blockResult.grid)) {
+        return col; // Block opponent's winning move
+      }
+
+      // Use minimax to evaluate other moves
+      const result = simulateMove(grid, col, "Red");
+      if (result) {
+        const score = minimax(result.grid, 4, false, "Blue");
         if (score > bestScore) {
           bestScore = score;
           bestMove = col;
@@ -62,10 +168,7 @@ const BotPlayer = () => {
       }
     }
 
-    if (bestMove !== null) {
-      return bestMove;
-    }
-    return null; // No valid moves
+    return bestMove !== null ? bestMove : 0; // Default to column 0 if no valid moves
   }
 
   // GRID ------------GRID ------------GRID ------------GRID ------------GRID ------------

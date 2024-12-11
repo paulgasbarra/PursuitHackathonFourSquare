@@ -81,12 +81,19 @@ const Grid = () => {
   };
 
   // Function to handle click on a grid square
+  const [previousColor, setPreviousColor] = useState("Blue"); // Track previous color
+
   const handleSquareClick = (coordinates) => {
     if (currentColor === "Blue") {
+      setPreviousColor("Blue"); // Store the current color before switching
       setCurrentColor("Red");
     } else if (currentColor === "Red") {
+      setPreviousColor("Red"); // Store the current color before switching
       setCurrentColor("Blue");
+    } else if (currentColor === "Lime") {
+      setCurrentColor(previousColor); // Revert to the previous color
     }
+
     setGridData((prevGridData) => {
       const column = coordinates[0];
       const newGrid = [...prevGridData];
@@ -125,6 +132,27 @@ const Grid = () => {
 
   let repeatTimes = 6;
 
+  const [bbcount, setBbcount] = useState(2);
+  const [rbcount, setRbcount] = useState(2);
+
+  const handleBb = () => {
+    if (bbcount >= 1) {
+      setCurrentColor("Lime");
+      setBbcount(bbcount - 1);
+    } else if (!bbcount) {
+      setBbcount("None");
+    }
+  };
+
+  const handleRb = () => {
+    if (rbcount >= 1) {
+      setCurrentColor("Lime");
+      setRbcount(rbcount - 1);
+    } else if (!rbcount) {
+      setRbcount("None");
+    }
+  };
+
   const root = document.documentElement;
   root.style.setProperty("--repeat-times", repeatTimes); // Update the CSS variable
 
@@ -138,7 +166,15 @@ const Grid = () => {
         Home
       </button>
       <h1>Connect 4!</h1>
-      <h1>It's {currentColor}'s turn!</h1>
+      <h1>
+        {currentColor === "Lime"
+          ? "Place your blocker."
+          : `It's ${currentColor}'s turn!`}
+      </h1>
+      <span>
+        <button onClick={handleBb}>Blue's Blockers: {bbcount}</button>{" "}
+        <button onClick={handleRb}>Red's Blockers: {rbcount}</button>
+      </span>
       <div className="grid-container" style={{ gridTemplateColumns: "10fr" }}>
         {gridData.map((row, rowIndex) => (
           <div key={rowIndex} className="grid-row">
