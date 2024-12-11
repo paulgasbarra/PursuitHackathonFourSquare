@@ -19,7 +19,7 @@ const LandingPage = () => {
           <p className="score__ties">Ties: </p>
         </div>
       </div>
-      <div className='play-mode'>
+      <div className="play-mode">
         <h1>Connect 4</h1>
         <div className='play-mode__buttons'>
           <button
