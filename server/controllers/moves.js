@@ -59,19 +59,18 @@ moves.post("/", async (req, res) => {
             );
 
         }
-
+        //Check if game ends in a draw
+        const isDraw = moves.length >= 42;
+        if (isDraw) {
+            await pool.query("UPDATE games SET status = 'draw' WHERE id = $1", [game_id]
+            );
+        }
         res.status(201).json({ payload: newMove });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
 
-//Check if game ends in a draw
-const isDraw = moves.length >= 42;
-if (isDraw) {
-    await pool.query("UPDATE games SET status = 'draw' WHERE id = $1", [game_id]
-    );
-}
 
 // GET all moves for a game
 moves.get("/:game_id", async (req, res) => {

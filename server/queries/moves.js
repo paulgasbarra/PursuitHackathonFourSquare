@@ -1,4 +1,4 @@
-const games = require("../controllers/game");
+const games = require("../controllers/games");
 const pool = require("../database/dbConfig");
 
 //INSERT a new move

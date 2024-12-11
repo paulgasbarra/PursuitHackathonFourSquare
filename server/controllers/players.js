@@ -7,10 +7,11 @@ const {
 } = require("../queries/players");
 
 //GET players by name
-players.get("/name/:username", async (req, res) => {
+players.get("/:id", async (req, res) => {
     try {
-        const { username } = req.params;
-        const player = await getPlayersByName(username);
+        const { id } = req.params;
+        const player = await getPlayersByName(id);
+        console.log("player: ", player);
         if (player) {
             res.status(200).json({ payload: player });
         } else {

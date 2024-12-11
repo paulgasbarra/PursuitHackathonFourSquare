@@ -1,11 +1,10 @@
 const pool = require("../database/dbConfig");
 
 //GET player by name
-const getPlayersByName = async (username) => {
+const getPlayersByName = async (id) => {
     try {
-        const result = await pool.query("SELECT * FROM players WHERE username = $1", [username]
-        );
-        return result.rows[0];
+        const result = await pool.query("SELECT * FROM players WHERE id = $1", [id]);
+        return result.rows;
     } catch (error) {
         return error;
     }
@@ -24,10 +23,10 @@ const updatePlayerStats = async (id, { wins, losses, draws }) => {
 
 //CREATE new player
 const createPlayer = async (playerData) => {
-    const { username, email, password } = playerData;
+    const { id, username, email, password } = playerData;
     try {
-        const result = await pool.query("INSERT INTO players (username, email, password) VALUES ($1, $2, $3) RETURNING *",
-            [username, email, password]
+        const result = await pool.query("INSERT INTO players (id,username, email, password) VALUES ($1, $2, $3, $4) RETURNING *",
+            [id, username, email, password]
         );
         return result.rows[0];
     } catch (error) {
