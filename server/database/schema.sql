@@ -1,7 +1,8 @@
--- drop database - step one, incase there is already a db, drop it
-DROP DATABASE IF EXISTS players_dev;
+DROP DATABASE IF EXISTS connect_four;
 
-CREATE DATABASE players_dev;
+CREATE DATABASE connect_four;
+
+\c connect_four;
 
 CREATE TABLE players (
     id SERIAL PRIMARY KEY,
@@ -25,3 +26,10 @@ CREATE TABLE games (
     end_time TIMESTAMP
 );
 
+CREATE TABLE games_moves (
+    id SERIAL PRIMARY KEY,
+    game_id INTEGER NOT NULL REFERENCES games(id),
+    player_id INTEGER NOT NULL REFERENCES players(id),
+    move INTEGER NOT NULL,
+    move_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
