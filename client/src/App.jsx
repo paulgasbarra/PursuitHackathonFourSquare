@@ -8,6 +8,7 @@ function App() {
   return (
     <div>
       <Routes>
+        <Route path="/vsbot" element={<BotPlayer />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/game" element={<Grid />} />
