@@ -189,6 +189,7 @@ const Grid = () => {
           </div>
         ))}
       </div>
+
       <button onClick={clear}>Clear Grid</button>
       {/* <button onClick={saveImage}>Save Image</button> */}
     </div>
